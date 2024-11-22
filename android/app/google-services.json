@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "207767018819",
+    "project_id": "nutriflow-4d0bd",
+    "storage_bucket": "nutriflow-4d0bd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:207767018819:android:3949e02a5f2d08da0c23f6",
+        "android_client_info": {
+          "package_name": "com.nutriflow.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "207767018819-25hbpqa1ov0c2i0mgbmgqg8s4kl5idhp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOFgghXJzKS09Yja2AhTcoPkgpm-ipyZM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "207767018819-25hbpqa1ov0c2i0mgbmgqg8s4kl5idhp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

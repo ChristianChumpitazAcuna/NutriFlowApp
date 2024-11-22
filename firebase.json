@@ -1,0 +1,22 @@
+{
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "nutriflow-4d0bd",
+                    "appId": "1:207767018819:android:3949e02a5f2d08da0c23f6",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "nutriflow-4d0bd",
+                    "configurations": {
+                        "android": "1:207767018819:android:3949e02a5f2d08da0c23f6",
+                        "web": "1:207767018819:web:ac542ad747fbf3270c23f6"
+                    }
+                }
+            }
+        }
+    }
+}
