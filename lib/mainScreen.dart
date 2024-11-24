@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/screens/create/createScreen.dart';
 import 'package:myapp/screens/favorites/favoritesScreen.dart';
 import 'package:myapp/screens/explore/exploreScreen.dart';
 import 'package:myapp/screens/main/homeScreen.dart';
@@ -18,8 +17,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = [
     const HomeScreen(),
     const ExploreScreen(),
-    const CreateScreen(),
-    const FavoritesScreem(),
+    const FavoritesScreen(),
     const ProfileScreen()
   ];
 

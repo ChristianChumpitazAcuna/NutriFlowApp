@@ -1,14 +1,14 @@
 class IngredientModel {
-  final int id;
+  int? id;
   final int recipeId;
   final String name;
-  final String status;
+  String? status;
 
   IngredientModel({
-    required this.id,
+    this.id,
     required this.recipeId,
     required this.name,
-    required this.status,
+    this.status,
   });
 
   factory IngredientModel.fromJson(Map<String, dynamic> json) {
@@ -18,5 +18,23 @@ class IngredientModel {
       name: json['name'],
       status: json['status'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'recipeId': recipeId,
+      'name': name,
+      'status': status,
+    };
+  }
+
+  static List<IngredientModel> fromJsonList(List<dynamic> jsonList) {
+    return jsonList.map((json) => IngredientModel.fromJson(json)).toList();
+  }
+
+  static List<Map<String, dynamic>> toJsonList(
+      List<IngredientModel> ingredients) {
+    return ingredients.map((ingredient) => ingredient.toJson()).toList();
   }
 }

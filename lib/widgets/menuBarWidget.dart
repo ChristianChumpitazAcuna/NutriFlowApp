@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/screens/create/addContentModal.dart';
 
 class MenuBarWidget extends StatelessWidget {
   final int selectedIndex;
@@ -32,14 +33,14 @@ class MenuBarWidget extends StatelessWidget {
             icon: Icons.grid_view_rounded,
             index: 1,
           ),
-          _buildMainButton(index: 2),
+          _buildMainButton(context: context),
           _buildMenuItem(
             icon: Icons.favorite_outline,
-            index: 3,
+            index: 2,
           ),
           _buildMenuItem(
             icon: Icons.person_3_outlined,
-            index: 4,
+            index: 3,
           ),
         ],
       ),
@@ -60,9 +61,10 @@ class MenuBarWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildMainButton({required int index}) {
+  Widget _buildMainButton({required context}) {
     return GestureDetector(
-      onTap: () => onItemTapped(index),
+      // show modal
+      onTap: () => {AddContentModal.show(context)},
       child: Container(
         width: 40,
         height: 40,

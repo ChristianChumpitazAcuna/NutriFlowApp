@@ -1,16 +1,16 @@
 class UserModel {
-  final int id;
+  final int? id;
   final String displayName;
   final String avatarUrl;
   final String email;
-  final String status;
+  final String? status;
 
   UserModel({
-    required this.id,
+    this.id,
     required this.displayName,
     required this.avatarUrl,
     required this.email,
-    required this.status,
+    this.status,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -21,5 +21,15 @@ class UserModel {
       email: json['email'],
       status: json['status'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'displayName': displayName,
+      'avatarUrl': avatarUrl,
+      'email': email,
+      'status': status,
+    };
   }
 }

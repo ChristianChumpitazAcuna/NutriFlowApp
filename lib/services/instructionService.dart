@@ -1,15 +1,13 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:myapp/auth/authService.dart';
-import 'package:myapp/dto/recipeDto.dart';
-import 'package:myapp/models/recipeModel.dart';
+import 'package:myapp/models/instructionModel.dart';
 
-class RecipeService {
-  final String baseUrl = "https://nutriflow-production.up.railway.app/recipes";
-  final AuthService _authService = AuthService();
+class InstructionService {
+  final String baseUrl =
+      "https://nutriflow-production.up.railway.app/instructions";
 
-  Future<List<RecipeDto>> getData(String status) async {
+  Future<List<InstructionModel>> getData(String status) async {
     try {
       final response = await http.get(
         Uri.parse("$baseUrl/list/$status"),
@@ -18,8 +16,9 @@ class RecipeService {
       if (response.statusCode == 200) {
         final String decodedData = utf8.decode(response.bodyBytes);
         List<dynamic> body = json.decode(decodedData);
-        List<RecipeDto> recipes =
-            body.map((dynamic item) => RecipeDto.fromJson(item)).toList();
+        List<InstructionModel> recipes = body
+            .map((dynamic item) => InstructionModel.fromJson(item))
+            .toList();
         return recipes;
       } else {
         throw Exception("Failed to load data");
@@ -29,22 +28,18 @@ class RecipeService {
     }
   }
 
-  Future<RecipeModel> postData(RecipeModel recipe) async {
+  Future<List<InstructionModel>> postData(
+      List<InstructionModel> instructions) async {
     try {
-      final userId = await _authService.getUserId();
-      if (userId == null) throw Exception("User not found");
-
-      recipe.userId = userId;
-
       final reponse = await http.post(Uri.parse("$baseUrl/save"),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: jsonEncode(recipe.toJson()));
+          body: jsonEncode(InstructionModel.toJsonList(instructions)));
 
       if (reponse.statusCode == 201) {
         final String decodedData = utf8.decode(reponse.bodyBytes);
-        return RecipeModel.fromJson(json.decode(decodedData));
+        return InstructionModel.fromJsonList(json.decode(decodedData));
       } else {
         throw Exception("Failed to save data");
       }
@@ -53,7 +48,8 @@ class RecipeService {
     }
   }
 
-  Future<RecipeModel> updateData(int id, RecipeModel recipe) async {
+  Future<InstructionModel> updateData(
+      int id, InstructionModel instruction) async {
     try {
       final response = await http.put(
         Uri.parse("$baseUrl/update/$id"),
@@ -64,7 +60,7 @@ class RecipeService {
 
       if (response.statusCode == 200) {
         final String decodedData = utf8.decode(response.bodyBytes);
-        return RecipeModel.fromJson(json.decode(decodedData));
+        return InstructionModel.fromJson(json.decode(decodedData));
       } else {
         throw Exception("Failed to update data");
       }
@@ -83,7 +79,7 @@ class RecipeService {
       );
 
       if (response.statusCode == 200) {
-        print("Recipe deleted successfully");
+        print("instruction deleted successfully");
       } else {
         throw Exception("Failed to delete data");
       }

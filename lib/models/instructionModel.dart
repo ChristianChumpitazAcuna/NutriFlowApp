@@ -1,16 +1,16 @@
 class InstructionModel {
-  final int id;
+  int? id;
   final int recipeId;
   final int stepNumber;
   final String name;
-  final String status;
+  String? status;
 
   InstructionModel({
-    required this.id,
+    this.id,
     required this.recipeId,
     required this.stepNumber,
     required this.name,
-    required this.status,
+    this.status,
   });
 
   factory InstructionModel.fromJson(Map<String, dynamic> json) {
@@ -21,5 +21,24 @@ class InstructionModel {
       name: json['name'],
       status: json['status'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'recipeId': recipeId,
+      'stepNumber': stepNumber,
+      'name': name,
+      'status': status,
+    };
+  }
+
+  static List<InstructionModel> fromJsonList(List<dynamic> jsonList) {
+    return jsonList.map((json) => InstructionModel.fromJson(json)).toList();
+  }
+
+  static List<Map<String, dynamic>> toJsonList(
+      List<InstructionModel> instructions) {
+    return instructions.map((instruction) => instruction.toJson()).toList();
   }
 }
