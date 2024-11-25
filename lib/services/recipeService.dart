@@ -1,13 +1,11 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:myapp/auth/authService.dart';
 import 'package:myapp/dto/recipeDto.dart';
 import 'package:myapp/models/recipeModel.dart';
 
 class RecipeService {
   final String baseUrl = "https://nutriflow-production.up.railway.app/recipes";
-  final AuthService _authService = AuthService();
 
   Future<List<RecipeDto>> getData(String status) async {
     try {
@@ -31,11 +29,6 @@ class RecipeService {
 
   Future<RecipeModel> postData(RecipeModel recipe) async {
     try {
-      final userId = await _authService.getUserId();
-      if (userId == null) throw Exception("User not found");
-
-      recipe.userId = userId;
-
       final reponse = await http.post(Uri.parse("$baseUrl/save"),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',

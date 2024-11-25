@@ -23,7 +23,10 @@ class AddContentModal {
                   openFilePicker(context);
                 },
                 icon: const Icon(Icons.photo_library),
-                label: const Text("Abrir Galería"),
+                label: const Text(
+                  "Abrir Galería",
+                  style: TextStyle(color: Colors.white60),
+                ),
               ),
               const SizedBox(height: 10),
               ElevatedButton.icon(
@@ -35,7 +38,10 @@ class AddContentModal {
                   Navigator.of(context).pop();
                 },
                 icon: const Icon(Icons.camera_alt),
-                label: const Text("Abrir Cámara"),
+                label: const Text(
+                  "Abrir Cámara",
+                  style: TextStyle(color: Colors.white60),
+                ),
               ),
               const SizedBox(height: 10),
             ],
@@ -46,14 +52,15 @@ class AddContentModal {
   }
 
   static Future<void> openFilePicker(BuildContext context) async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-        allowMultiple: false,
-        allowedExtensions: ['jpg', 'png'],
-        type: FileType.custom);
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+          allowMultiple: false,
+          allowedExtensions: ['jpg', 'png'],
+          type: FileType.custom);
 
-    if (result != null) {
+      if (result == null) return;
       String? filePath = result.files.single.path;
-      if (filePath == null) return;
+      if (filePath == null || filePath.isEmpty) return;
       if (context.mounted == false) return;
 
       Navigator.push(
@@ -62,8 +69,8 @@ class AddContentModal {
               builder: (context) => PreviewContent(
                     imagePath: filePath,
                   )));
-    } else {
-      print("No se seleccionó ningún archivo.");
+    } catch (e) {
+      throw Exception('Error al abrir la galería: $e');
     }
   }
 }

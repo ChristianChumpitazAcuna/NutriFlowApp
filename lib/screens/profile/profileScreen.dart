@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/auth/authService.dart';
+import 'package:myapp/services/auth/authService.dart';
 import 'package:myapp/screens/loginScreen.dart';
 import 'package:myapp/screens/profile/widgets/userInfoWidget.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';

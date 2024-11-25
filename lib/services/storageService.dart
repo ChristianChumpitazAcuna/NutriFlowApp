@@ -8,33 +8,33 @@ class StorageService {
   final cloudName = dotenv.env['CLOUDINARY_CLOUD_NAME'] ?? '';
 
   Future<String?> uploadImage(File file) async {
-    if (!file.existsSync()) {
-      print('File does not exist');
-      return null;
-    }
+    try {
+      if (file.existsSync() == false) return null;
+      final uri =
+          Uri.parse('https://api.cloudinary.com/v1_1/$cloudName/image/upload');
+      final request = http.MultipartRequest('POST', uri);
 
-    final uri =
-        Uri.parse('https://api.cloudinary.com/v1_1/$cloudName/image/upload');
-    final request = http.MultipartRequest('POST', uri);
+      final fileBytes = await file.readAsBytes();
+      final filePart = http.MultipartFile.fromBytes('file', fileBytes,
+          filename: file.path.split('/').last);
 
-    final fileBytes = await file.readAsBytes();
-    final filePart = http.MultipartFile.fromBytes('file', fileBytes,
-        filename: file.path.split('/').last);
+      request.files.add(filePart);
+      request.fields['upload_preset'] = 'presetUpload';
+      request.fields['resource_type'] = 'raw';
 
-    request.files.add(filePart);
-    request.fields['upload_preset'] = 'presetUpload';
-    request.fields['resource_type'] = 'raw';
+      final response = await request.send();
 
-    final response = await request.send();
-    if (response.statusCode == 200) {
+      if (response.statusCode != 200) return null;
+
       final responseBody = await response.stream.bytesToString();
+
+      if (responseBody.isEmpty) return null;
+
       final responseJson = jsonDecode(responseBody);
       final imageUrl = responseJson['secure_url'];
-      print('Uploaded Image URL: $imageUrl');
       return imageUrl;
-    } else {
-      print('Upload failed with status: ${response.statusCode}');
-      return null;
+    } catch (e) {
+      throw Exception('Error uploading image: $e');
     }
   }
 }

@@ -1,7 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:myapp/screens/create/formScreens/createRecipeScreen.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:myapp/screens/create/forms/recipeScreen.dart';
+import 'package:myapp/services/notificationService.dart';
 import 'package:myapp/services/storageService.dart';
+import 'package:toastification/toastification.dart';
 
 class PreviewContent extends StatefulWidget {
   final String imagePath;
@@ -13,69 +16,109 @@ class PreviewContent extends StatefulWidget {
 
 class _PreviewContentState extends State<PreviewContent> {
   final StorageService _storageService = StorageService();
+  final NotificationService _notificationService = NotificationService();
+  bool _isLoading = false;
 
   void _sendContent(BuildContext context) async {
     try {
-      if (widget.imagePath.isEmpty) return;
+      setState(() {
+        _isLoading = true;
+      });
 
+      if (widget.imagePath.isEmpty) return;
       File file = File(widget.imagePath);
 
       final imageUrl = await _storageService.uploadImage(file);
       if (imageUrl == null) return;
       if (context.mounted == false) return;
 
-      print(imageUrl);
-
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => CreateRecipeScreen(imageUrl: imageUrl),
+          builder: (context) => RecipeScreen(imageUrl: imageUrl),
         ),
       );
-      print('Image URL: $imageUrl');
     } catch (e) {
-      print('Error: $e');
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
+      _notificationService.showNotification(
+          context: context,
+          message: 'Error: $e',
+          type: ToastificationType.error);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final double screenWight = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 17, 17, 17),
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        leading: IconButton(
-          icon: const Icon(Icons.close, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.check, color: Colors.white),
-            onPressed: () {
-              _sendContent(context);
-            },
-          )
-        ],
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        backgroundColor: Colors.white,
+        body: Stack(
           children: [
-            Expanded(
+            Center(
               child: Image.file(
+                width: screenWight,
                 File(widget.imagePath), // Muestra la imagen
                 fit: BoxFit.contain,
               ),
             ),
+            Positioned(
+                top: 30,
+                right: 10,
+                bottom: 0,
+                child: Expanded(
+                    child: Column(
+                  children: [
+                    IconButton(
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.orange,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                        ),
+                        onPressed: () {
+                          _sendContent(context);
+                        },
+                        icon: const Icon(
+                          Icons.check,
+                          color: Colors.white,
+                        )),
+                    IconButton(
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: const Icon(
+                          Icons.close,
+                          color: Colors.white,
+                        )),
+                  ],
+                ))),
+            if (_isLoading)
+              Stack(
+                children: [
+                  Container(
+                    color: Colors.black.withOpacity(0.5),
+                    width: double.infinity,
+                    height: double.infinity,
+                  ),
+                  // Widget de animación de carga
+                  Center(
+                    child: LoadingAnimationWidget.dotsTriangle(
+                      color: Colors.white,
+                      size: 40,
+                    ),
+                  ),
+                ],
+              ),
           ],
-        ),
-      ),
-    );
+        ));
   }
 }

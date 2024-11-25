@@ -3,10 +3,10 @@ import 'package:myapp/screens/create/addContentModal.dart';
 
 class MenuBarWidget extends StatelessWidget {
   final int selectedIndex;
-  final Function(int) onItemTapped;
+  final Function(int)? onItemTapped;
 
   const MenuBarWidget(
-      {super.key, required this.selectedIndex, required this.onItemTapped});
+      {super.key, required this.selectedIndex, this.onItemTapped});
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +49,7 @@ class MenuBarWidget extends StatelessWidget {
 
   Widget _buildMenuItem({required IconData icon, required int index}) {
     return GestureDetector(
-      onTap: () => onItemTapped(index),
+      onTap: () => onItemTapped!(index),
       child: Container(
         padding: const EdgeInsets.all(10),
         child: Icon(icon,

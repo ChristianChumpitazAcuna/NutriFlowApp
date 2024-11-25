@@ -1,6 +1,6 @@
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
-import 'package:loading_indicator/loading_indicator.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:myapp/dto/recipeDto.dart';
 import 'package:myapp/screens/recipeDetail/RecipesDetailsScreen.dart';
 import 'package:myapp/screens/main/widgets/avatarWidget.dart';
@@ -18,6 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final RecipeService _recipeService = RecipeService();
   List<RecipeDto> recipes = [];
   int currentIndex = 0;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -27,13 +28,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _fetchRecipes() async {
     try {
-      final fetchedRecipes = await _recipeService.getData('active');
       setState(() {
-        recipes = fetchedRecipes;
+        _isLoading = true;
+      });
+      final data = await _recipeService.getData('active');
+
+      if (data.isEmpty) return;
+
+      setState(() {
+        recipes = data;
       });
     } catch (e) {
-      // ignore: avoid_print
-      print('Error fetching recipes: $e');
+      throw Exception('Error: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -41,18 +51,22 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     return Stack(children: [
-      if (recipes.isEmpty)
-        const Center(
+      if (_isLoading)
+        Center(
           child: SizedBox(
             height: 50,
             width: 50,
-            child: LoadingIndicator(
-              indicatorType: Indicator.lineScalePulseOutRapid,
-              colors: [
-                Colors.black54,
-                Colors.black,
-              ],
+            child: LoadingAnimationWidget.dotsTriangle(
+              color: Colors.white,
+              size: 40,
             ),
+          ),
+        )
+      else if (recipes.isEmpty)
+        const Center(
+          child: Text(
+            "No hay recetas disponibles",
+            style: TextStyle(color: Colors.black, fontSize: 18),
           ),
         )
       else
