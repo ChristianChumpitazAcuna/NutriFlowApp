@@ -1,10 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:myapp/dto/recipeDto.dart';
-import 'package:myapp/screens/recipeDetail/RecipesDetailsScreen.dart';
+import 'package:myapp/screens/views/recipeDetailsScreen.dart';
 import 'package:myapp/screens/main/widgets/avatarWidget.dart';
 import 'package:myapp/screens/main/widgets/descriptionWidget.dart';
+import 'package:myapp/screens/views/userProfileView.dart';
 import 'package:myapp/services/recipeService.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -91,11 +93,20 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Stack(
                           fit: StackFit.expand,
                           children: [
-                            Image.network(
-                              recipe.imageUrl,
+                            CachedNetworkImage(
+                              imageUrl: recipe.imageUrl,
                               fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  const Icon(Icons.broken_image, size: 100),
+                              progressIndicatorBuilder:
+                                  (context, url, downloadProgress) => Center(
+                                child: CircularProgressIndicator(
+                                  value: downloadProgress.progress,
+                                  color: Colors.amber,
+                                ),
+                              ),
+                              errorWidget: (context, url, error) =>
+                                  const Icon(Icons.error),
+                              // width: double.infinity,
+                              // height: double.infinity,
                             ),
                             Align(
                                 alignment: Alignment.bottomLeft,
@@ -123,11 +134,26 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             Positioned(
-                top: 50,
-                right: 10,
-                child: AvatarWidget(
-                    avatar: recipes[currentIndex].userId.avatarUrl,
-                    displayName: recipes[currentIndex].userId.displayName)),
+              top: 50,
+              right: 10,
+              child: GestureDetector(
+                  onTap: () {
+                    final userId = recipes[currentIndex].userId.id;
+                    if (userId != null) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UserProfileView(userId: userId),
+                        ),
+                      );
+                    } else {
+                      return;
+                    }
+                  },
+                  child: AvatarWidget(
+                      avatar: recipes[currentIndex].userId.avatarUrl,
+                      displayName: recipes[currentIndex].userId.displayName)),
+            )
           ],
         ),
     ]);

@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:material_duration_picker/material_duration_picker.dart';
 import 'package:myapp/firebase_options.dart';
-import 'package:myapp/mainScreen.dart';
 import 'package:myapp/screens/loginScreen.dart';
+import 'package:myapp/widgets/navigationMenu.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +20,6 @@ class MyApp extends StatelessWidget {
   Future<User?> _checkCurrentUser() async {
     final User? currentUser = FirebaseAuth.instance.currentUser;
 
-    print(currentUser);
     return currentUser;
   }
 
@@ -43,7 +42,7 @@ class MyApp extends StatelessWidget {
             }
 
             if (snapshot.hasData && snapshot.data != null) {
-              return const MainScreen();
+              return const NavigationMenu();
             } else {
               return const LogInScreen();
             }

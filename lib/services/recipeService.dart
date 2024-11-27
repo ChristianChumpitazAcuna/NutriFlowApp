@@ -7,6 +7,26 @@ import 'package:myapp/models/recipeModel.dart';
 class RecipeService {
   final String baseUrl = "https://nutriflow-production.up.railway.app/recipes";
 
+  Future<List<RecipeDto>> getByUser(int userId, String status) async {
+    try {
+      final response = await http.get(
+        Uri.parse("$baseUrl/list/$status/user/$userId"),
+      );
+
+      if (response.statusCode == 200) {
+        final String decodedData = utf8.decode(response.bodyBytes);
+        List<dynamic> body = json.decode(decodedData);
+        List<RecipeDto> recipes =
+            body.map((dynamic item) => RecipeDto.fromJson(item)).toList();
+        return recipes;
+      } else {
+        throw Exception("Failed to load data");
+      }
+    } catch (e) {
+      throw Exception("Error: $e");
+    }
+  }
+
   Future<List<RecipeDto>> getData(String status) async {
     try {
       final response = await http.get(

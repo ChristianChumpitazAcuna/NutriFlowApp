@@ -6,7 +6,7 @@ class NotificationService {
     required BuildContext context,
     required String message,
     ToastificationType type = ToastificationType.info,
-    Duration duration = const Duration(seconds: 2),
+    Duration duration = const Duration(seconds: 4),
   }) {
     toastification.show(
       context: context,

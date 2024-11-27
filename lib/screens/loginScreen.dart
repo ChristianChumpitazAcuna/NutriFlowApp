@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:myapp/services/auth/authService.dart';
-import 'package:myapp/mainScreen.dart';
 import 'package:myapp/services/notificationService.dart';
+import 'package:myapp/widgets/navigationMenu.dart';
 import 'package:toastification/toastification.dart';
 
 class LogInScreen extends StatefulWidget {
@@ -36,7 +36,7 @@ class _LogInScreenState extends State<LogInScreen> {
 
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const MainScreen()),
+        MaterialPageRoute(builder: (context) => const NavigationMenu()),
       );
     } catch (e) {
       _notificationService.showNotification(

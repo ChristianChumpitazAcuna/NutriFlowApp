@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:searchbar_animation/searchbar_animation.dart';
 
 class SearchBarWidget extends StatelessWidget {
-  const SearchBarWidget({super.key});
+  final TextEditingController controller;
+  const SearchBarWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Container(
         margin: const EdgeInsets.only(top: 30, left: 10, right: 10),
         child: SearchBarAnimation(
-          textEditingController: TextEditingController(),
+          textEditingController: controller,
           isOriginalAnimation: true,
           enableKeyboardFocus: true,
           cursorColour: Colors.white,

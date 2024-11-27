@@ -57,7 +57,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
 
       final servings = int.tryParse(formData['servings'].toString()) ?? 0;
       final recipe = RecipeModel(
-          id: _userId,
+          userId: _userId,
           name: formData['name'],
           description: formData['description'],
           time: _timeController.text,
@@ -89,7 +89,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
     } catch (e) {
       _notificationService.showNotification(
           context: context,
-          message: 'Error: $e',
+          message: 'Error al crear la receta',
           type: ToastificationType.error);
       throw Exception("Error: $e");
     } finally {
@@ -103,167 +103,243 @@ class _RecipeScreenState extends State<RecipeScreen> {
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
-    return Scaffold(
-        backgroundColor: Colors.white,
-        body: Stack(
-          children: [
-            Column(
-              children: [
-                SizedBox(
-                    width: screenWidth,
-                    height: screenHeight / 4,
-                    child: const Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Mi Receta',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold),
-                        )
-                      ],
-                    )),
-                Expanded(
-                  child: Container(
-                      padding:
-                          const EdgeInsets.only(top: 15, left: 30, right: 30),
-                      decoration: const BoxDecoration(
-                          color: Colors.black,
-                          borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(50))),
-                      child: Center(
-                          child: SingleChildScrollView(
-                              child: FormBuilder(
-                        key: _formKey,
-                        child: Column(
-                          children: [
-                            FormBuilderTextField(
-                                style: const TextStyle(color: Colors.white70),
-                                name: 'name',
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  labelText: 'Nombre',
-                                  hintText: 'Nombre de la receta',
-                                ),
-                                validator: FormBuilderValidators.compose([
-                                  FormBuilderValidators.required(),
-                                  FormBuilderValidators.minLength(6),
-                                ])),
-                            const SizedBox(height: 16),
-                            FormBuilderTextField(
-                                name: 'description',
-                                style: const TextStyle(color: Colors.white70),
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  labelText: 'Descripción',
-                                  hintText: 'Breve descripción de la receta',
-                                ),
-                                validator: FormBuilderValidators.compose([
-                                  FormBuilderValidators.required(),
-                                  FormBuilderValidators.minLength(10),
-                                ])),
-                            const SizedBox(height: 16),
-                            FormBuilderTextField(
-                                name: 'servings',
-                                style: const TextStyle(color: Colors.white70),
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  labelText: 'Porciones',
-                                  hintText: 'Cantidad de porciones',
-                                ),
-                                keyboardType: TextInputType.number,
-                                validator: FormBuilderValidators.compose([
-                                  FormBuilderValidators.numeric(),
-                                  FormBuilderValidators.required(),
-                                  FormBuilderValidators.minLength(1),
-                                ])),
-                            const SizedBox(height: 20),
-                            Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  GestureDetector(
-                                      onTap: () async {
-                                        final selectedDuration =
-                                            await showDurationPicker(
-                                          helpText: 'Selecciona el tiempo',
-                                          context: context,
-                                          initialDuration: Duration.zero,
-                                        );
-                                        if (selectedDuration != null) {
-                                          String formatTime =
-                                              '${selectedDuration.inHours}h ${(selectedDuration.inMinutes % 60)} min';
-
-                                          setState(() {
-                                            _displayTime = formatTime;
-                                          });
-
-                                          _timeController.text = formatTime;
-                                          _formKey.currentState?.fields['time']
-                                              ?.didChange(
-                                                  selectedDuration.toString());
-                                        }
-                                      },
-                                      child: Row(
-                                        children: [
-                                          const Icon(Icons.timelapse_rounded,
-                                              size: 30, color: Colors.white70),
-                                          const SizedBox(width: 5),
-                                          Text(
-                                            _displayTime,
-                                            style: const TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.white60),
-                                          ),
-                                        ],
-                                      ))
-                                ]),
-                            const SizedBox(height: 80),
-                            ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.orange,
-                                ),
-                                onPressed: _isLoading
-                                    ? null
-                                    : () {
-                                        _validateForm(context);
-                                      },
-                                child: Text(
-                                  _isLoading ? 'Cargando...' : 'Siguiente',
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(color: Colors.white),
-                                )),
-                          ],
-                        ),
-                      )))),
+    return PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('Acción no permitida'),
+              content: Text('No puedes retroceder en este momento.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Entendido'),
                 ),
               ],
             ),
-            if (_isLoading)
-              Stack(
-                children: [
-                  Container(
-                    color: Colors.black.withOpacity(0.5),
-                    width: double.infinity,
-                    height: double.infinity,
-                  ),
-                  // Widget de animación de carga
-                  Center(
-                    child: LoadingAnimationWidget.dotsTriangle(
-                      color: Colors.white,
-                      size: 40,
+          );
+        },
+        child: Scaffold(
+            backgroundColor: Colors.white,
+            body: Stack(
+              children: [
+                Column(
+                  children: [
+                    SizedBox(
+                        width: screenWidth,
+                        height: screenHeight / 4,
+                        child: const Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Mi Receta',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        )),
+                    Expanded(
+                      child: Container(
+                          padding: const EdgeInsets.only(
+                              top: 15, left: 30, right: 30),
+                          decoration: const BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(50))),
+                          child: Center(
+                              child: SingleChildScrollView(
+                                  child: FormBuilder(
+                            key: _formKey,
+                            child: Column(
+                              children: [
+                                FormBuilderTextField(
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
+                                    style:
+                                        const TextStyle(color: Colors.white70),
+                                    name: 'name',
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      labelText: 'Nombre',
+                                      hintText: 'Nombre de la receta',
+                                    ),
+                                    validator: FormBuilderValidators.compose([
+                                      FormBuilderValidators.required(
+                                          errorText:
+                                              'Debes ingresar un nombre'),
+                                      FormBuilderValidators.minLength(6,
+                                          errorText:
+                                              'El nombre debe tener al menos 6 caracteres'),
+                                    ])),
+                                const SizedBox(height: 16),
+                                FormBuilderTextField(
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
+                                    name: 'description',
+                                    style:
+                                        const TextStyle(color: Colors.white70),
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      labelText: 'Descripción',
+                                      hintText:
+                                          'Breve descripción de la receta',
+                                    ),
+                                    validator: FormBuilderValidators.compose([
+                                      FormBuilderValidators.required(
+                                          errorText:
+                                              'Debes ingresar una descripción'),
+                                      FormBuilderValidators.minLength(10,
+                                          errorText:
+                                              'La descripción debe tener al menos 10 caracteres'),
+                                    ])),
+                                const SizedBox(height: 16),
+                                FormBuilderTextField(
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
+                                    name: 'servings',
+                                    style:
+                                        const TextStyle(color: Colors.white70),
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      labelText: 'Porciones',
+                                      hintText: 'Cantidad de porciones',
+                                    ),
+                                    keyboardType: TextInputType.number,
+                                    validator: FormBuilderValidators.compose([
+                                      FormBuilderValidators.numeric(
+                                          errorText:
+                                              'Debes ingresar un número'),
+                                      FormBuilderValidators.required(
+                                          errorText:
+                                              'Debes ingresar una cantidad de porciones'),
+                                      FormBuilderValidators.minLength(1,
+                                          errorText:
+                                              'La cantidad de porciones debe ser mayor o igual a 1'),
+                                    ])),
+                                const SizedBox(height: 20),
+                                FormBuilderField(
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
+                                    name: 'time',
+                                    validator: FormBuilderValidators.required(),
+                                    builder: (FormFieldState state) {
+                                      return Column(
+                                        children: [
+                                          Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                GestureDetector(
+                                                    onTap: () async {
+                                                      final selectedDuration =
+                                                          await showDurationPicker(
+                                                        helpText:
+                                                            'Selecciona el tiempo',
+                                                        context: context,
+                                                        initialDuration:
+                                                            Duration.zero,
+                                                      );
+                                                      if (selectedDuration !=
+                                                          null) {
+                                                        String formatTime =
+                                                            '${selectedDuration.inHours}h ${(selectedDuration.inMinutes % 60)} min';
+
+                                                        setState(() {
+                                                          _displayTime =
+                                                              formatTime;
+                                                        });
+
+                                                        _timeController.text =
+                                                            formatTime;
+                                                        _formKey.currentState
+                                                            ?.fields['time']
+                                                            ?.didChange(
+                                                                selectedDuration
+                                                                    .toString());
+                                                      }
+                                                    },
+                                                    child: Row(
+                                                      children: [
+                                                        const Icon(
+                                                            Icons
+                                                                .timelapse_rounded,
+                                                            size: 30,
+                                                            color:
+                                                                Colors.white70),
+                                                        const SizedBox(
+                                                            width: 5),
+                                                        Text(
+                                                          _displayTime,
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontSize: 16,
+                                                                  color: Colors
+                                                                      .white60),
+                                                        ),
+                                                      ],
+                                                    )),
+                                              ]),
+                                          if (state.hasError)
+                                            Text(
+                                              ' Debes selecionar un tiempo',
+                                              style: const TextStyle(
+                                                  color: Colors.red),
+                                            ),
+                                        ],
+                                      );
+                                    }),
+                                const SizedBox(height: 80),
+                                ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.orange,
+                                    ),
+                                    onPressed: _isLoading
+                                        ? null
+                                        : () {
+                                            _validateForm(context);
+                                          },
+                                    child: Text(
+                                      _isLoading ? 'Cargando...' : 'Siguiente',
+                                      textAlign: TextAlign.center,
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    )),
+                              ],
+                            ),
+                          )))),
                     ),
+                  ],
+                ),
+                if (_isLoading)
+                  Stack(
+                    children: [
+                      Container(
+                        color: Colors.black.withOpacity(0.5),
+                        width: double.infinity,
+                        height: double.infinity,
+                      ),
+                      // Widget de animación de carga
+                      Center(
+                        child: LoadingAnimationWidget.dotsTriangle(
+                          color: Colors.white,
+                          size: 40,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-          ],
-        ));
+              ],
+            )));
   }
 }

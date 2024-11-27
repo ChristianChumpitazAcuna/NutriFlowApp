@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:myapp/dto/recipeDto.dart';
 
 class RecipeDetailsScreen extends StatelessWidget {
@@ -23,7 +25,7 @@ class RecipeDetailsScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(30),
         ),
         child: const Icon(
-          Icons.arrow_back,
+          Iconsax.arrow_left_2,
           color: Colors.black,
         ),
       ),
@@ -33,13 +35,19 @@ class RecipeDetailsScreen extends StatelessWidget {
           children: [
             Stack(
               children: [
-                Image.network(
-                  recipe.imageUrl,
+                CachedNetworkImage(
+                  imageUrl: recipe.imageUrl,
                   fit: BoxFit.cover,
+                  progressIndicatorBuilder: (context, url, downloadProgress) =>
+                      Center(
+                    child: CircularProgressIndicator(
+                      value: downloadProgress.progress,
+                      color: Colors.amber,
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
                   height: 300,
                   width: screenWidth,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.broken_image, size: 100),
                 ),
                 Container(
                   height: 301,

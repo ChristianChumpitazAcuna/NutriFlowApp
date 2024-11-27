@@ -1,9 +1,12 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:myapp/screens/create/previewContent.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 class AddContentModal {
+  static final ImagePicker _picker = ImagePicker();
+
   static void show(BuildContext context) {
     WoltModalSheet.show(
       context: context,
@@ -20,9 +23,9 @@ class AddContentModal {
                   iconColor: Colors.white,
                 ),
                 onPressed: () {
-                  openFilePicker(context);
+                  openGalleryOrCamera(context, true);
                 },
-                icon: const Icon(Icons.photo_library),
+                icon: const Icon(Iconsax.gallery),
                 label: const Text(
                   "Abrir Galería",
                   style: TextStyle(color: Colors.white60),
@@ -35,9 +38,9 @@ class AddContentModal {
                   iconColor: Colors.white,
                 ),
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  openGalleryOrCamera(context, false);
                 },
-                icon: const Icon(Icons.camera_alt),
+                icon: const Icon(Iconsax.camera),
                 label: const Text(
                   "Abrir Cámara",
                   style: TextStyle(color: Colors.white60),
@@ -51,16 +54,14 @@ class AddContentModal {
     );
   }
 
-  static Future<void> openFilePicker(BuildContext context) async {
+  static Future<void> openGalleryOrCamera(
+      BuildContext context, bool isGallery) async {
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-          allowMultiple: false,
-          allowedExtensions: ['jpg', 'png'],
-          type: FileType.custom);
-
-      if (result == null) return;
-      String? filePath = result.files.single.path;
-      if (filePath == null || filePath.isEmpty) return;
+      final XFile? image = await _picker.pickImage(
+          source: isGallery ? ImageSource.gallery : ImageSource.camera);
+      if (image == null) return;
+      String? filePath = image.path;
+      if (filePath.isEmpty) return;
       if (context.mounted == false) return;
 
       Navigator.push(
@@ -70,7 +71,7 @@ class AddContentModal {
                     imagePath: filePath,
                   )));
     } catch (e) {
-      throw Exception('Error al abrir la galería: $e');
+      throw Exception('Error opening image: $e');
     }
   }
 }

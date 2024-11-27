@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:myapp/screens/create/forms/recipeScreen.dart';
 import 'package:myapp/services/notificationService.dart';
@@ -68,8 +69,7 @@ class _PreviewContentState extends State<PreviewContent> {
                 top: 30,
                 right: 10,
                 bottom: 0,
-                child: Expanded(
-                    child: Column(
+                child: Column(
                   children: [
                     IconButton(
                         style: IconButton.styleFrom(
@@ -82,7 +82,7 @@ class _PreviewContentState extends State<PreviewContent> {
                           _sendContent(context);
                         },
                         icon: const Icon(
-                          Icons.check,
+                          Iconsax.send_2,
                           color: Colors.white,
                         )),
                     IconButton(
@@ -96,11 +96,11 @@ class _PreviewContentState extends State<PreviewContent> {
                           Navigator.pop(context);
                         },
                         icon: const Icon(
-                          Icons.close,
+                          Iconsax.arrow_left,
                           color: Colors.white,
                         )),
                   ],
-                ))),
+                )),
             if (_isLoading)
               Stack(
                 children: [

@@ -61,7 +61,7 @@ class _IngredientScreenState extends State<IngredientScreen> {
     } catch (e) {
       _notificationService.showNotification(
           context: context,
-          message: 'Error: $e',
+          message: 'Error al crear los ingredientes',
           type: ToastificationType.error);
       throw Exception("Error: $e");
     } finally {
@@ -75,150 +75,179 @@ class _IngredientScreenState extends State<IngredientScreen> {
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
-    return Scaffold(
-        backgroundColor: Colors.white,
-        body: Stack(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                    width: screenWidth,
-                    height: screenHeight / 4,
-                    child: const Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Ingredientes',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold),
-                        )
-                      ],
-                    )),
-                Expanded(
-                  child: Container(
-                      padding:
-                          const EdgeInsets.only(top: 15, left: 30, right: 30),
-                      decoration: const BoxDecoration(
-                          color: Colors.black,
-                          borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(50))),
-                      child: Center(
-                          child: SingleChildScrollView(
-                              child: FormBuilder(
-                        key: _formKey,
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: FormBuilderTextField(
-                                      style: const TextStyle(
-                                          color: Colors.white70),
-                                      name: 'name',
-                                      decoration: InputDecoration(
-                                        border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                        ),
-                                        labelText: 'Ingrediente',
-                                        hintText: 'Nombre del ingrediente',
-                                      ),
-                                      validator: FormBuilderValidators.compose([
-                                        FormBuilderValidators.required(),
-                                        FormBuilderValidators.minLength(4),
-                                      ])),
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      iconColor: Colors.black,
-                                      shape: const CircleBorder(),
-                                      backgroundColor: Colors.white,
-                                    ),
-                                    onPressed: _addIngredients,
-                                    child: const Icon(Icons.add)),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 30,
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: const Color.fromARGB(255, 24, 24, 24),
-                              ),
-                              height: screenHeight / 2.5,
-                              child: ListView.builder(
-                                itemCount: _ingredients.length,
-                                itemBuilder: (context, index) {
-                                  final ingredient = _ingredients[index];
-                                  return ListTile(
-                                    title: Text(
-                                      ingredient.name,
-                                      style: const TextStyle(
-                                          color: Colors.white54),
-                                    ),
-                                    trailing: IconButton(
-                                      style: IconButton.styleFrom(
-                                          backgroundColor: Colors.black38),
-                                      color: Colors.white54,
-                                      icon: const Icon(Icons.delete_outline),
-                                      onPressed: () {
-                                        setState(() {
-                                          _ingredients.removeAt(index);
-                                        });
-                                      },
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.orange,
-                                ),
-                                onPressed: _isLoading
-                                    ? null
-                                    : () {
-                                        _submitForm(context);
-                                      },
-                                child: Text(
-                                  _isLoading ? 'Cargando...' : 'Siguiente',
-                                  style: const TextStyle(color: Colors.white),
-                                )),
-                          ],
-                        ),
-                      )))),
+    return PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('Acción no permitida'),
+              content: Text('No puedes retroceder en este momento.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Entendido'),
                 ),
               ],
             ),
-            if (_isLoading)
-              Stack(
-                children: [
-                  Container(
-                    color: Colors.black.withOpacity(0.5),
-                    width: double.infinity,
-                    height: double.infinity,
-                  ),
-                  // Widget de animación de carga
-                  Center(
-                    child: LoadingAnimationWidget.dotsTriangle(
-                      color: Colors.white,
-                      size: 40,
+          );
+        },
+        child: Scaffold(
+            backgroundColor: Colors.white,
+            body: Stack(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                        width: screenWidth,
+                        height: screenHeight / 4,
+                        child: const Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Ingredientes',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        )),
+                    Expanded(
+                      child: Container(
+                          padding: const EdgeInsets.only(
+                              top: 15, left: 30, right: 30),
+                          decoration: const BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(50))),
+                          child: Center(
+                              child: SingleChildScrollView(
+                                  child: FormBuilder(
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            key: _formKey,
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: FormBuilderTextField(
+                                          style: const TextStyle(
+                                              color: Colors.white70),
+                                          name: 'name',
+                                          decoration: InputDecoration(
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                            ),
+                                            labelText: 'Ingrediente',
+                                            hintText: 'Nombre del ingrediente',
+                                          ),
+                                          validator:
+                                              FormBuilderValidators.compose([
+                                            FormBuilderValidators.required(
+                                                errorText:
+                                                    'Debes ingresar un nombre'),
+                                            FormBuilderValidators.minLength(4,
+                                                errorText:
+                                                    'El nombre debe tener al menos 4 caracteres'),
+                                          ])),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          iconColor: Colors.black,
+                                          shape: const CircleBorder(),
+                                          backgroundColor: Colors.white,
+                                        ),
+                                        onPressed: _addIngredients,
+                                        child: const Icon(Icons.add)),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    color:
+                                        const Color.fromARGB(255, 24, 24, 24),
+                                  ),
+                                  height: screenHeight / 2.5,
+                                  child: ListView.builder(
+                                    itemCount: _ingredients.length,
+                                    itemBuilder: (context, index) {
+                                      final ingredient = _ingredients[index];
+                                      return ListTile(
+                                        title: Text(
+                                          ingredient.name,
+                                          style: const TextStyle(
+                                              color: Colors.white54),
+                                        ),
+                                        trailing: IconButton(
+                                          style: IconButton.styleFrom(
+                                              backgroundColor: Colors.black38),
+                                          color: Colors.white54,
+                                          icon:
+                                              const Icon(Icons.delete_outline),
+                                          onPressed: () {
+                                            setState(() {
+                                              _ingredients.removeAt(index);
+                                            });
+                                          },
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.orange,
+                                    ),
+                                    onPressed: _isLoading
+                                        ? null
+                                        : () {
+                                            _submitForm(context);
+                                          },
+                                    child: Text(
+                                      _isLoading ? 'Cargando...' : 'Siguiente',
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    )),
+                              ],
+                            ),
+                          )))),
                     ),
+                  ],
+                ),
+                if (_isLoading)
+                  Stack(
+                    children: [
+                      Container(
+                        color: Colors.black.withOpacity(0.5),
+                        width: double.infinity,
+                        height: double.infinity,
+                      ),
+                      // Widget de animación de carga
+                      Center(
+                        child: LoadingAnimationWidget.dotsTriangle(
+                          color: Colors.white,
+                          size: 40,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-          ],
-        ));
+              ],
+            )));
   }
 }

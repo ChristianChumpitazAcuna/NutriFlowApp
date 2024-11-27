@@ -6,9 +6,12 @@ class FavoritesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        color: Colors.blue,
+        color: const Color.fromARGB(255, 12, 12, 12),
         child: const Center(
-          child: Text('Favorites Screen'),
+          child: Text(
+            'Comming soon!',
+            style: TextStyle(color: Colors.white),
+          ),
         ));
   }
 }
