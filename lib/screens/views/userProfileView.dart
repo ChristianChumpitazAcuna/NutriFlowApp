@@ -70,31 +70,34 @@ class _UserProfileViewState extends State<UserProfileView> {
         ),
         backgroundColor: Colors.black,
         body: Stack(children: [
-          Column(
-            children: [
-              SizedBox(
-                height: screenHeight / 3,
-                width: screenWidth,
-                child: recipes.isNotEmpty
-                    ? UserInfoWidget(
-                        displayName: recipes[0].userId.displayName,
-                        email: recipes[0].userId.email,
-                        photoUrl: recipes[0].userId.avatarUrl)
-                    : Center(
-                        child: CircularProgressIndicator(color: Colors.amber),
-                      ),
-              ),
-              Expanded(
-                  child: Container(
-                      color: const Color.fromARGB(255, 12, 12, 12),
-                      child: _isLoading
-                          ? LoadingAnimationWidget.dotsTriangle(
-                              color: Colors.white,
-                              size: 40,
-                            )
-                          : UserRecipesWidget(recipes: recipes))),
-            ],
-          ),
+          _isLoading
+              ? Center(
+                  child: LoadingAnimationWidget.dotsTriangle(
+                    color: Colors.white,
+                    size: 40,
+                  ),
+                )
+              : Column(
+                  children: [
+                    SizedBox(
+                      height: screenHeight / 3,
+                      width: screenWidth,
+                      child: recipes.isNotEmpty
+                          ? UserInfoWidget(
+                              displayName: recipes[0].userId.displayName,
+                              email: recipes[0].userId.email,
+                              photoUrl: recipes[0].userId.avatarUrl)
+                          : Center(
+                              child: CircularProgressIndicator(
+                                  color: Colors.amber),
+                            ),
+                    ),
+                    Expanded(
+                        child: Container(
+                            color: const Color.fromARGB(255, 12, 12, 12),
+                            child: UserRecipesWidget(recipes: recipes))),
+                  ],
+                ),
         ]));
   }
 }

@@ -162,9 +162,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Container(
                       color: const Color.fromARGB(255, 12, 12, 12),
                       child: _isLoading
-                          ? LoadingAnimationWidget.dotsTriangle(
-                              color: Colors.white,
-                              size: 40,
+                          ? Center(
+                              child: LoadingAnimationWidget.dotsTriangle(
+                                color: Colors.white,
+                                size: 40,
+                              ),
                             )
                           : UserRecipesWidget(recipes: recipes))),
             ],

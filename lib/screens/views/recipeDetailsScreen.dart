@@ -2,6 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:myapp/dto/recipeDto.dart';
+import 'package:myapp/screens/main/widgets/avatarWidget.dart';
+import 'package:myapp/screens/views/userProfileView.dart';
 
 class RecipeDetailsScreen extends StatelessWidget {
   final RecipeDto recipe;
@@ -11,6 +13,7 @@ class RecipeDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
@@ -57,9 +60,9 @@ class RecipeDetailsScreen extends StatelessWidget {
                       begin: Alignment.bottomCenter,
                       end: Alignment.topCenter,
                       colors: [
-                        Colors.black, // Parte inferior más oscura
+                        Colors.black,
                         Colors.black12,
-                        Colors.transparent, // Parte superior transparente
+                        Colors.transparent,
                       ],
                     ),
                   ),
@@ -72,12 +75,38 @@ class RecipeDetailsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 20),
-                    Text(
-                      recipe.name,
-                      style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          recipe.name,
+                          style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        ),
+                        GestureDetector(
+                            onTap: () {
+                              final userId = recipe.userId.id;
+                              if (userId != null) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        UserProfileView(userId: userId),
+                                  ),
+                                );
+                              } else {
+                                return;
+                              }
+                            },
+                            child: ClipOval(
+                                child: CachedNetworkImage(
+                              imageUrl: recipe.userId.avatarUrl,
+                              height: screenHeight / 20,
+                              fit: BoxFit.cover,
+                            )))
+                      ],
                     ),
                     Row(
                       children: [
