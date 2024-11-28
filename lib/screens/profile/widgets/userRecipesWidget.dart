@@ -3,10 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:myapp/dto/recipeDto.dart';
 import 'package:myapp/screens/views/recipeDetailsScreen.dart';
 
-class UserRecipesWidget extends StatelessWidget {
+class UserRecipesWidget extends StatefulWidget {
   final List<RecipeDto> recipes;
-  const UserRecipesWidget({super.key, required this.recipes});
+  final VoidCallback onRefresh;
 
+  const UserRecipesWidget(
+      {super.key, required this.recipes, required this.onRefresh});
+
+  @override
+  State<UserRecipesWidget> createState() => _UserRecipesWidgetState();
+}
+
+class _UserRecipesWidgetState extends State<UserRecipesWidget> {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
@@ -16,16 +24,19 @@ class UserRecipesWidget extends StatelessWidget {
           mainAxisSpacing: 1.5,
           childAspectRatio: 0.75,
         ),
-        itemCount: recipes.length,
+        itemCount: widget.recipes.length,
         itemBuilder: (context, index) {
-          final recipe = recipes[index];
+          final recipe = widget.recipes[index];
           return GestureDetector(
             onTap: () {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          RecipeDetailsScreen(recipe: recipe)));
+                      builder: (context) => RecipeDetailsScreen(
+                            recipe: recipe,
+                            isCurrentUser: true,
+                            onRefresh: widget.onRefresh,
+                          )));
             },
             child: CachedNetworkImage(
               imageUrl: recipe.imageUrl,

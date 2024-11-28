@@ -86,9 +86,9 @@ class RecipeService {
     }
   }
 
-  Future<void> changeStatus(int id, String status) async {
+  Future<RecipeModel> changeStatus(int id, String status) async {
     try {
-      final response = await http.patch(
+      final response = await http.put(
         Uri.parse("$baseUrl/$status/$id"),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
@@ -96,9 +96,10 @@ class RecipeService {
       );
 
       if (response.statusCode == 200) {
-        print("Recipe deleted successfully");
+        final String decodedData = utf8.decode(response.bodyBytes);
+        return RecipeModel.fromJson(json.decode(decodedData));
       } else {
-        throw Exception("Failed to delete data");
+        throw Exception("Failed to update data");
       }
     } catch (e) {
       throw Exception("Error: $e");

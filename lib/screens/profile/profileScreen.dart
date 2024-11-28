@@ -168,7 +168,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 size: 40,
                               ),
                             )
-                          : UserRecipesWidget(recipes: recipes))),
+                          : UserRecipesWidget(
+                              recipes: recipes,
+                              onRefresh: _fetchRecipes,
+                            ))),
             ],
           ),
           Positioned(

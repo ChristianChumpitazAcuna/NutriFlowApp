@@ -95,7 +95,10 @@ class _UserProfileViewState extends State<UserProfileView> {
                     Expanded(
                         child: Container(
                             color: const Color.fromARGB(255, 12, 12, 12),
-                            child: UserRecipesWidget(recipes: recipes))),
+                            child: UserRecipesWidget(
+                              recipes: recipes,
+                              onRefresh: _fetchRecipes,
+                            ))),
                   ],
                 ),
         ]));

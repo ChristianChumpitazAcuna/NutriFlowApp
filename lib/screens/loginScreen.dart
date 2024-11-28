@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -115,6 +114,7 @@ class _LogInScreenState extends State<LogInScreen> {
                           : () {
                               _handleGoogleSignIn(context);
                             },
+                      
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,
                         shape: RoundedRectangleBorder(
@@ -122,7 +122,6 @@ class _LogInScreenState extends State<LogInScreen> {
                         ),
                         shadowColor: Colors.black,
                         elevation: 5,
-                        // minimumSize: const Size(300, 50),
                       ),
                       child: const Text('Iniciar Sesión',
                           style: TextStyle(fontSize: 15, color: Colors.white)),
